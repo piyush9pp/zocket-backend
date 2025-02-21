@@ -15,9 +15,9 @@ var DB *mongo.Database
 var client *mongo.Client
 
 func InitDB() error {
-    if err := godotenv.Load(); err != nil {
-        return errors.New("error loading .env file: " + err.Error())
-    }
+    // if err := godotenv.Load(); err != nil {
+    //     return errors.New("error loading .env file: " + err.Error())
+    // }
 
     clientOptions := options.Client().ApplyURI(os.Getenv("MONGODB_URI"))
     var err error
