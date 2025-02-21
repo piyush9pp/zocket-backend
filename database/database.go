@@ -2,32 +2,33 @@ package database
 
 import (
     "context"
-    "errors"
     "log"
     "os"
-
-    // "github.com/joho/godotenv"
     "go.mongodb.org/mongo-driver/mongo"
     "go.mongodb.org/mongo-driver/mongo/options"
+    "github.com/joho/godotenv"
 )
 
 var DB *mongo.Database
 var client *mongo.Client
 
 func InitDB() error {
-    // if err := godotenv.Load(); err != nil {
-    //     return errors.New("error loading .env file: " + err.Error())
-    // }
+    // ✅ Load .env only in local development
+    if os.Getenv("RENDER") == "" { 
+        if err := godotenv.Load(); err != nil {
+            log.Println("⚠️ Warning: .env file not found. Using system environment variables.")
+        }
+    }
 
     clientOptions := options.Client().ApplyURI(os.Getenv("MONGODB_URI"))
     var err error
     client, err = mongo.Connect(context.TODO(), clientOptions)
     if err != nil {
-        return errors.New("failed to connect to MongoDB: " + err.Error())
+        return err
     }
 
     if err = client.Ping(context.TODO(), nil); err != nil {
-        return errors.New("MongoDB connection failed: " + err.Error())
+        return err
     }
 
     DB = client.Database("taskdb")
